@@ -6,7 +6,7 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  console.log("Error:", err.message);
+  console.error("Error:", err.message);
 
   const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
 

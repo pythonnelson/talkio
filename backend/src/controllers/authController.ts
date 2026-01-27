@@ -11,7 +11,7 @@ export async function getMe(
   try {
     const userId = req.userId;
 
-    const user = User.findById({ userId });
+    const user = await User.findById({ userId });
     if (!user) {
       res.status(404).json({ message: "User not found" });
       return;
@@ -20,7 +20,7 @@ export async function getMe(
     res.status(200).json(user);
   } catch (error) {
     res.status(500);
-    next();
+    next(error);
   }
 }
 
