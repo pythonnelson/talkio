@@ -2,6 +2,7 @@ import type { NextFunction, Response } from "express";
 import type { AuthRequest } from "../middleware/auth";
 import { Chat } from "../models/Chat";
 import { Types } from "mongoose";
+import { User } from "../models/User";
 
 export async function getChats(
   req: AuthRequest,
@@ -44,16 +45,23 @@ export async function getOrCreateChat(
 ) {
   try {
     const userId = req.userId;
-    const { participantId } = req.params;
+    const participantId = req.params.participantId as string;
 
     if (!participantId) {
       res.status(400).json({ message: "Participant ID is required" });
       return;
     }
 
-    // if (!Types.ObjectId.isValid(participantId)) {
-    //   return res.status(400).json({ message: "Invalid participant ID" });
-    // }
+    if (!Types.ObjectId.isValid(participantId)) {
+      res.status(400).json({ message: "Invalid participant ID" });
+      return;
+    }
+
+    const participant = await User.findById(participantId);
+    if (!participant) {
+      res.status(404).json({ message: "Participant not found" });
+      return;
+    }
 
     if (userId === participantId) {
       res.status(400).json({ message: "Cannot create chat with yourself" });
@@ -61,17 +69,13 @@ export async function getOrCreateChat(
     }
 
     // check if chat already exists
-    let chat = await Chat.findOne({
-      participants: { $all: [userId, participantId] },
-    })
+    const chat = await Chat.findOneAndUpdate(
+      { participants: { $all: [userId, participantId] } },
+      { $setOnInsert: { participants: [userId, participantId] } },
+      { new: true, upsert: true },
+    )
       .populate("participants", "name email avatar")
       .populate("lastMessage");
-
-    if (!chat) {
-      const newChat = new Chat({ participants: [userId, participantId] });
-      await newChat.save();
-      chat = await newChat.populate("participants", "name email avatar");
-    }
 
     const otherParticipant = chat.participants.find(
       (p: any) => p._id.toString() !== userId,
