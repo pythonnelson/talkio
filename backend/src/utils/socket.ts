@@ -5,12 +5,8 @@ import { Message } from "../models/Message";
 import { Chat } from "../models/Chat";
 import { User } from "../models/User";
 
-interface SocketWithUserId extends Socket {
-  userId: string;
-}
-
 // store online users in memory: userId -> socketId
-export const onlineUsers: Map<string, string> = new Map();
+export const onlineUsers: Map<string, Set<string>> = new Map();
 
 export const initializeSocket = (httpServer: HttpServer) => {
   const allowedOrigins = [
@@ -38,11 +34,11 @@ export const initializeSocket = (httpServer: HttpServer) => {
       const user = await User.findOne({ clerkId });
       if (!user) return next(new Error("User not found"));
 
-      (socket as SocketWithUserId).userId = user._id.toString();
+      socket.data.userId.userId = user._id.toString();
 
       next();
-    } catch (error: any) {
-      next(new Error(error));
+    } catch (error: unknown) {
+      next(error instanceof Error ? error : new Error(String(error)));
     }
   });
 
@@ -55,7 +51,9 @@ export const initializeSocket = (httpServer: HttpServer) => {
     socket.emit("online-users", { userIds: Array.from(onlineUsers.keys()) });
 
     // store user in the onlineUsers map
-    onlineUsers.set(userId, socket.id);
+    const sockets = onlineUsers.get(userId) ?? new Set();
+    sockets.add(socket.id);
+    onlineUsers.set(userId, sockets);
 
     // notify others that this current user is online
     socket.broadcast.emit("user-online", { userId });
@@ -119,7 +117,11 @@ export const initializeSocket = (httpServer: HttpServer) => {
     );
 
     socket.on("disconnect", () => {
-      onlineUsers.delete(userId);
+      const sockets = onlineUsers.get(userId);
+      if (sockets) {
+        sockets.delete(socket.id);
+        if (sockets.size === 0) onlineUsers.delete(userId);
+      }
 
       // notify others
       socket.broadcast.emit("user-offline", { userId });
