@@ -2,7 +2,7 @@ import { View, Text, Pressable } from "react-native";
 import React from "react";
 import { Chat } from "@/types";
 import { Image } from "expo-image";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, isValid } from "date-fns";
 
 const ChatItem = ({ chat, onPress }: { chat: Chat; onPress: () => void }) => {
   const participant = chat.participant;
@@ -16,6 +16,8 @@ const ChatItem = ({ chat, onPress }: { chat: Chat; onPress: () => void }) => {
     <Pressable
       className="flex-row items-center py-3 active:opacity-70"
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`Chat with ${participant.name}`}
     >
       {/* Avatar image */}
       <View className="relative">
@@ -42,11 +44,13 @@ const ChatItem = ({ chat, onPress }: { chat: Chat; onPress: () => void }) => {
               <View className="w-2.5 h-2.5 bg-primary rounded-full" />
             )}
             <Text className="text-xs text-subtle-foreground">
-              {chat.lastMessageAt
-                ? formatDistanceToNow(new Date(chat.lastMessageAt), {
-                    addSuffix: false,
-                  })
-                : ""}
+              {(() => {
+                if (!chat.lastMessageAt) return "";
+                const date = new Date(chat.lastMessageAt);
+                return isValid(date)
+                  ? formatDistanceToNow(date, { addSuffix: false })
+                  : "";
+              })()}
             </Text>
           </View>
         </View>

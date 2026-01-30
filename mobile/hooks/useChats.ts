@@ -8,10 +8,11 @@ export const useChats = () => {
 
   return useQuery({
     queryKey: ["chats"],
-    queryFn: async (): Promise<Chat[]> => {
+    queryFn: async ({ signal }): Promise<Chat[]> => {
       const { data } = await apiWithAuth<Chat[]>({
         method: "GET",
         url: "/chats",
+        signal,
       });
       return data;
     },

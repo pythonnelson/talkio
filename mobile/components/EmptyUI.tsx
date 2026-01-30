@@ -33,6 +33,8 @@ function EmptyUI({
         <Pressable
           className="mt-6 bg-primary px-6 py-3 rounded-full"
           onPress={onPressButton}
+          accessibilityRole="button"
+          accessibilityLabel={buttonLabel}
         >
           <Text className="text-foreground font-semibold">{buttonLabel}</Text>
         </Pressable>
