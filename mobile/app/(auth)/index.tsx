@@ -10,6 +10,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import useAuthSocial from "@/hooks/useSocialAuth";
+import { LinearGradient } from "expo-linear-gradient";
+import { AnimatedOrb } from "@/components/AnimatedOrb";
+import { BlurView } from "expo-blur";
 
 const { width, height } = Dimensions.get("window");
 
@@ -19,8 +22,53 @@ const AuthScreen = () => {
 
   return (
     <View className="flex-1 bg-surface-dark">
-      {/*  TODO: Implement animated orbs */}
-      <View className="absolute inset-0 overflow-hidden"></View>
+      <View className="absolute inset-0 overflow-hidden">
+        <LinearGradient
+          colors={["#0D0D0F", "#1A1A2E", "#16213E", "#0D0D0F"]}
+          style={{ position: "absolute", width: "100%", height: "100%" }}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        />
+
+        <AnimatedOrb
+          colors={["#1877F2", "#A0A0A5"]}
+          size={300}
+          initialX={-80}
+          initialY={height * 0.1}
+          duration={4000}
+        />
+
+        <AnimatedOrb
+          colors={["#468CF2", "#1877F2"]}
+          size={250}
+          initialX={width - 100}
+          initialY={height * 0.3}
+          duration={5000}
+        />
+
+        <AnimatedOrb
+          colors={["#6AA7F7", "#FFFFFF"]}
+          size={200}
+          initialX={width * 0.3}
+          initialY={height * 0.6}
+          duration={3500}
+        />
+
+        <AnimatedOrb
+          colors={["#1877F2", "#FFFFFF"]}
+          size={180}
+          initialX={-50}
+          initialY={height * 0.75}
+          duration={4500}
+        />
+
+        <BlurView
+          intensity={70}
+          tint="dark"
+          style={{ position: "absolute", width: "100%", height: "100%" }}
+        />
+      </View>
+
       <SafeAreaView className="flex-1">
         {/* Top-section Branding */}
         <View className="items-center pt-10">
