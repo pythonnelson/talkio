@@ -49,8 +49,7 @@
           "project": "talkio",
           "organization": "oversight-innovative-technologies"
         }
-      ],
-      "@sentry/react-native"
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

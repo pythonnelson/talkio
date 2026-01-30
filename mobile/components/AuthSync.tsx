@@ -11,10 +11,9 @@ const AuthSync = () => {
 
   useEffect(() => {
     if (isSignedIn && user && !hasSynced.current) {
-      hasSynced.current = true;
-
       syncUser(undefined, {
         onSuccess: (data) => {
+          hasSynced.current = true;
           console.log("✅ User synced with backend:", data.name);
           Sentry.logger.info(
             Sentry.logger.fmt`User synced with backend: ${data.name}`,
