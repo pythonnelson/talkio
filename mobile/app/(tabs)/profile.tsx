@@ -10,7 +10,11 @@ const ProfileTab = () => {
       <ScrollView>
         <Text className="text-white">Profile Tab</Text>
         <Pressable
-          onPress={() => signOut()}
+          onPress={() =>
+            signOut({
+              redirectUrl: "/(auth)",
+            })
+          }
           className="mt-4 bg-red-600 px-4 py-2 rounded-lg"
         >
           <Text>Sign out</Text>

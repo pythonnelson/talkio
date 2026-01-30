@@ -74,7 +74,7 @@ const AuthScreen = () => {
                     style={{ width: 20, height: 20 }}
                     contentFit="contain"
                   />
-                  <Text className="text-slate-900 font-semibold text-sm">
+                  <Text className="text-slate-900 font-semibold text-xs">
                     Continue with Google
                   </Text>
                 </>
@@ -94,7 +94,7 @@ const AuthScreen = () => {
               ) : (
                 <>
                   <Ionicons name="logo-apple" size={20} color="#FFFFFF" />
-                  <Text className="text-foreground font-semibold text-sm">
+                  <Text className="text-foreground font-semibold text-xs">
                     Continue with Apple
                   </Text>
                 </>
