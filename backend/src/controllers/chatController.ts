@@ -57,28 +57,30 @@ export async function getOrCreateChat(
       return;
     }
 
-    const participant = await User.findById(participantId);
-    if (!participant) {
-      res.status(404).json({ message: "Participant not found" });
-      return;
-    }
-
     if (userId === participantId) {
       res.status(400).json({ message: "Cannot create chat with yourself" });
       return;
     }
 
-    // check if chat already exists
-    const chat = await Chat.findOneAndUpdate(
+    const participantExists = await User.exists({ _id: participantId });
+    if (!participantExists) {
+      res.status(404).json({ message: "Participant not found" });
+      return;
+    }
+
+    let chat = await Chat.findOneAndUpdate(
       { participants: { $all: [userId, participantId] } },
       { $setOnInsert: { participants: [userId, participantId] } },
-      { new: true, upsert: true },
-    )
-      .populate("participants", "name email avatar")
-      .populate("lastMessage");
+      { new: true, upsert: true, setDefaultsOnInsert: true },
+    );
+
+    await chat.populate([
+      { path: "participants", select: "name email avatar" },
+      { path: "lastMessage" },
+    ]);
 
     const otherParticipant = chat.participants.find(
-      (p: any) => p._id.toString() !== userId,
+      (p) => p._id.toString() !== userId,
     );
 
     res.json({
