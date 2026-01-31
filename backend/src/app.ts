@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import cors from "cors";
 
 import { clerkMiddleware } from "@clerk/express";
 
@@ -10,6 +11,19 @@ import usersRoutes from "./routes/userRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
+
+const allowedOrigins = [
+  "http://localhost:8081", // expo mobile
+  "http://localhost:5173", // vite web devs
+  process.env.FRONTEND_URL!, // production
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true, // allow credentials from client (cookies, authorization headers, etc.)
+  }),
+);
 
 /*
 Creates an Express application. The express() function is a 
