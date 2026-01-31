@@ -12,11 +12,16 @@ import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
 
+const frontendUrl = process.env.FRONTEND_URL;
+if (process.env.NODE_ENV === "production" && !frontendUrl) {
+  throw new Error("FRONTEND_URL must be set in production");
+}
+
 const allowedOrigins = [
   "http://localhost:8081", // expo mobile
   "http://localhost:5173", // vite web devs
-  process.env.FRONTEND_URL!, // production
-].filter(Boolean);
+  ...(frontendUrl ? [frontendUrl] : []), // production
+];
 
 app.use(
   cors({

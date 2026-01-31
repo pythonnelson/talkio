@@ -8,7 +8,7 @@ function HomePage() {
       {/* LEFT */}
       <div className="flex flex-1 flex-col h-full">
         {/* NAVBAR */}
-        <nav className="flex items-center justify-between px-6 py-3 lg:px-10 flex-shrink-0">
+        <nav className="flex items-center justify-between px-6 py-3 lg:px-10 shrink-0">
           {/* Brand */}
           <div className="flex items-center gap-1">
             <img
@@ -31,7 +31,7 @@ function HomePage() {
             </SignInButton>
 
             <SignUpButton mode="modal">
-              <button className="btn gap-2 bg-linear-to-r from-blue-500 to-sky-blue-500 text-sm font-semibold rounded-full hover:opacity-90 shadow-lg shadow-white/25 border-none">
+              <button className="btn gap-2 bg-linear-to-r from-blue-500 to-sky-500 text-sm font-semibold rounded-full hover:opacity-90 shadow-lg shadow-white/25 border-none">
                 Get Started
                 <ArrowRightIcon className="w-4 h-4" />
               </button>
@@ -172,7 +172,7 @@ function HomePage() {
         />
         {/* Radial Glow */}
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px]
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 h-125
            bg-linear-to-r from-blue-500/20 to-red-500/20 rounded-full blur-[100px]"
         />
 

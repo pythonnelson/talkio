@@ -125,7 +125,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
           ack?.({ success: true, messageId: message._id.toString() });
         } catch (error) {
           ack?.({ success: false });
-          socket.emit("socket-error", { message: "Failed to send message" });
+          // socket.emit("socket-error", { message: "Failed to send message" });
         }
       },
     );
