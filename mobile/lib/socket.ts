@@ -4,10 +4,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { Chat, Message, MessageSender } from "@/types";
 import * as Sentry from "@sentry/react-native";
 
-const SOCKET_URL =
-  process.env.EXPO_PUBLIC_API_URL || "https://localhost:3000/api";
-if (!SOCKET_URL) throw new Error("Missing SOCKET_URL_URL");
-
+const SOCKET_URL = "https://91a5900c3819.ngrok-free.app";
 interface SocketState {
   socket: Socket | null;
   isConnected: boolean;
