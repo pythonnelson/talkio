@@ -13,18 +13,21 @@ function UserItem({ user, isOnline, onPress }: UserItemProps) {
     <Pressable
       className="flex-row items-center py-2.5 active:opacity-70"
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`Start chat with ${user.name}`}
     >
       <View className="relative">
         <Image
           source={{ uri: user.avatar }}
           style={{ width: 48, height: 48, borderRadius: 999 }}
+          placeholder={require("../assets/images/logo.png")}
         />
         {isOnline && (
           <View className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-[2px] border-surface" />
         )}
       </View>
 
-      <View className="flex-1 ml-3  pb-2">
+      <View className="flex-1 ml-3 pb-2">
         <View className="flex-row items-center justify-between">
           <Text className="text-foreground font-medium" numberOfLines={1}>
             {user.name}

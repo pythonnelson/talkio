@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   ScrollView,
   Text,
@@ -34,6 +35,7 @@ const NewChatScreen = () => {
   const handleUserSelect = (user: User) => {
     getOrCreateChat(user._id, {
       onSuccess: (chat) => {
+        if (!chat.participant) return;
         router.dismiss(); // go -1
 
         setTimeout(() => {
@@ -47,6 +49,9 @@ const NewChatScreen = () => {
             },
           });
         }, 100);
+      },
+      onError: (error) => {
+        Alert.alert("Error", "Failed to create chat. Please try again.");
       },
     });
   };

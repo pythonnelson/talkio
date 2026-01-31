@@ -68,26 +68,17 @@ export async function getOrCreateChat(
       return;
     }
 
-    // 1️⃣ Find existing chat
-    let chat = await Chat.findOne({
-      participants: { $all: [userId, participantId] },
-    });
+    let chat = await Chat.findOneAndUpdate(
+      { participants: { $all: [userId, participantId] } },
+      { $setOnInsert: { participants: [userId, participantId] } },
+      { new: true, upsert: true, setDefaultsOnInsert: true },
+    );
 
-    // 2️⃣ Create if missing
-    if (!chat) {
-      chat = new Chat({
-        participants: [userId, participantId],
-      });
-      await chat.save();
-    }
-
-    // 3️⃣ Populate (Mongoose v7+ safe)
     await chat.populate([
       { path: "participants", select: "name email avatar" },
       { path: "lastMessage" },
     ]);
 
-    // 4️⃣ Type-safe extraction
     const otherParticipant = chat.participants.find(
       (p) => p._id.toString() !== userId,
     );
