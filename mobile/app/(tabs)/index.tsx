@@ -4,7 +4,6 @@ import { useChats } from "@/hooks/useChats";
 import { Chat } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -12,6 +11,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const ChatsTab = () => {
   const router = useRouter();
@@ -20,7 +20,7 @@ const ChatsTab = () => {
   if (isLoading) {
     return (
       <View className="flex-1 bg-surface items-center justify-center">
-        <ActivityIndicator size={"large"} color={"#1877F2"} />
+        <ActivityIndicator size={"large"} color={"#FFFFFF"} />
       </View>
     );
   }
@@ -39,8 +39,7 @@ const ChatsTab = () => {
     );
   }
 
-  // TODO: Test later
-  const handlePressItem = (chat: Chat) => {
+  const handleChatPress = (chat: Chat) => {
     router.push({
       pathname: "/chat/[id]",
       params: {
@@ -53,12 +52,12 @@ const ChatsTab = () => {
   };
 
   return (
-    <View className="bg-surface flex-1">
+    <SafeAreaView className="flex-1 bg-surface">
       <FlatList
-        data={chats ?? []}
+        data={chats}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
-          <ChatItem chat={item} onPress={() => handlePressItem(item)} />
+          <ChatItem chat={item} onPress={() => handleChatPress(item)} />
         )}
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="automatic"
@@ -80,25 +79,24 @@ const ChatsTab = () => {
           />
         }
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
 export default ChatsTab;
 
-// Chat Header
 function Header() {
   const router = useRouter();
 
   return (
-    <View className="px-5 pt-12 pb-4">
+    <View className="px-5 pt-2 pb-4">
       <View className="flex-row items-center justify-between">
         <Text className="text-2xl font-bold text-foreground">Chats</Text>
         <Pressable
           className="size-10 bg-primary rounded-full items-center justify-center"
           onPress={() => router.push("/new-chat")}
         >
-          <Ionicons name="create-outline" size={20} color={"#0D0D0F"} />
+          <Ionicons name="create-outline" size={20} color="#FFFFFF" />
         </Pressable>
       </View>
     </View>

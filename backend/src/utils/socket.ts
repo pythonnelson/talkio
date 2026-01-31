@@ -22,6 +22,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
   // verify socket connection - if the user is authenticated, we will store the user id in the socket
   io.use(async (socket, next) => {
     const token = socket.handshake.auth.token; // this is what user will send from client
+    console.log("Token", token);
+
     if (!token) return next(new Error("Authentication error"));
 
     try {
@@ -29,12 +31,14 @@ export const initializeSocket = (httpServer: HttpServer) => {
         secretKey: process.env.CLERK_SECRET_KEY!,
       });
 
+      console.log("Session", session);
+
       const clerkId = session.sub;
 
       const user = await User.findOne({ clerkId });
       if (!user) return next(new Error("User not found"));
 
-      socket.data.userId.userId = user._id.toString();
+      socket.data.userId = user._id.toString();
 
       next();
     } catch (error: unknown) {

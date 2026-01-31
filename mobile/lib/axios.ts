@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/react-native";
 import { useAuth } from "@clerk/clerk-expo";
 import { useCallback } from "react";
 
-const API_URL = "https://7b84a26bd93e.ngrok-free.app/api";
+const API_URL = "https://91a5900c3819.ngrok-free.app/api";
 
 const api = axios.create({
   baseURL: API_URL,

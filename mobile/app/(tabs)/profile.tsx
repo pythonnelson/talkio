@@ -4,6 +4,7 @@ import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { MENU_SECTIONS } from "@/constants";
+import { router } from "expo-router";
 
 const ProfileTab = () => {
   const { signOut } = useAuth();
@@ -93,7 +94,10 @@ const ProfileTab = () => {
       {/* Logout Button */}
       <Pressable
         className="mx-5 mt-8 bg-red-500/10 rounded-2xl py-4 items-center active:opacity-70 border border-red-500/20"
-        onPress={() => signOut()}
+        onPress={async () => {
+          await signOut();
+          router.push("/(auth)");
+        }}
       >
         <View className="flex-row items-center">
           <Ionicons name="log-out-outline" size={20} color="#EF4444" />
