@@ -25,20 +25,9 @@ const SocketConnection = () => {
 
     return () => {
       mounted = false;
+      disconnect();
     };
   }, [isSignedIn, connect, disconnect, getToken, queryClient]);
-
-  // useEffect(() => {
-  //   if (isSignedIn) {
-  //     getToken().then((token) => {
-  //       if (token) connect(token, queryClient);
-  //     });
-  //   } else disconnect();
-
-  //   return () => {
-  //     disconnect();
-  //   };
-  // }, [isSignedIn, connect, disconnect, getToken, queryClient]);
 
   return null;
 };

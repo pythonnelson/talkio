@@ -81,6 +81,15 @@ const ChatDetailScreen = () => {
     }
   }, [messages]);
 
+  // Cleanup typing timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleTyping = useCallback(
     (text: string) => {
       setMessageText(text);

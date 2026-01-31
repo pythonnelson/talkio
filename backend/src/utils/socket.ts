@@ -22,7 +22,10 @@ export const initializeSocket = (httpServer: HttpServer) => {
   // verify socket connection - if the user is authenticated, we will store the user id in the socket
   io.use(async (socket, next) => {
     const token = socket.handshake.auth.token; // this is what user will send from client
-    console.log("Token", token);
+
+    if (process.env.NODE_ENV === "development") {
+      console.debug("Socket auth token present", { present: Boolean(token) });
+    }
 
     if (!token) return next(new Error("Authentication error"));
 
@@ -31,7 +34,9 @@ export const initializeSocket = (httpServer: HttpServer) => {
         secretKey: process.env.CLERK_SECRET_KEY!,
       });
 
-      console.log("Session", session);
+      if (process.env.NODE_ENV === "development") {
+        console.debug("Socket auth session", { sub: session.sub });
+      }
 
       const clerkId = session.sub;
 

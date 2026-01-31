@@ -4,7 +4,9 @@ import { QueryClient } from "@tanstack/react-query";
 import { Chat, Message, MessageSender } from "@/types";
 import * as Sentry from "@sentry/react-native";
 
-const SOCKET_URL = "https://91a5900c3819.ngrok-free.app";
+const SOCKET_URL =
+  process.env.EXPO_PUBLIC_API_URL || "https://localhost:3000/api";
+if (!SOCKET_URL) throw new Error("Missing SOCKET_URL_URL");
 
 interface SocketState {
   socket: Socket | null;
@@ -90,9 +92,22 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       queryClient.setQueryData<Message[]>(["messages", message.chat], (old) => {
         if (!old) return [message];
         // remove any optimistic messages (temp IDs) and add the real one
-        const filtered = old.filter((m) => !m._id.startsWith("temp-"));
-        if (filtered.some((m) => m._id === message._id)) return filtered;
-        return [...filtered, message];
+        // const filtered = old.filter((m) => !m._id.startsWith("temp-"));
+        // if (filtered.some((m) => m._id === message._id)) return filtered;
+        // return [...filtered, message];
+
+        // Check if message already exists
+        if (old.some((m) => m._id === message._id)) return old;
+        // Find and replace matching optimistic message by text + approximate time
+        const optimisticIdx = old.findIndex(
+          (m) => m._id.startsWith("temp-") && m.text === message.text,
+        );
+        if (optimisticIdx !== -1) {
+          const updated = [...old];
+          updated[optimisticIdx] = message;
+          return updated;
+        }
+        return [...old, message];
       });
 
       // Update chat's lastMessage directly for instant UI update
@@ -212,14 +227,38 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       return [...old, optimisticMessage];
     });
 
-    socket.emit("send-message", { chatId, text });
+    // socket.emit("send-message", { chatId, text });
+    socket.emit(
+      "send-message",
+      { chatId, text },
+      (ack: { success: boolean; messageId?: string }) => {
+        if (ack.success) {
+          Sentry.logger.info("Message sent successfully", { chatId });
+        }
+      },
+    );
 
-    Sentry.logger.info("Message sent successfully", {
-      chatId,
-      messageLength: text.length,
-    });
+    // Sentry.logger.info("Message sent successfully", {
+    //   chatId,
+    //   messageLength: text.length,
+    // });
 
-    const errorHandler = (error: { message: string }) => {
+    // const errorHandler = (error: { message: string }) => {
+
+    // Set a timeout to clean up if no confirmation/error received
+    const timeoutId = setTimeout(() => {
+      Sentry.logger.warn("Message send timeout - no server response", {
+        chatId,
+      });
+      socket.off("socket-error", errorHandler);
+    }, 10000);
+
+    const errorHandler = (error: { message: string; chatId?: string }) => {
+      // Only handle errors for this specific message if server includes chatId
+      if (error.chatId && error.chatId !== chatId) return;
+
+      clearTimeout(timeoutId);
+
       Sentry.logger.error("Failed to send message", {
         chatId,
         error: error.message,
