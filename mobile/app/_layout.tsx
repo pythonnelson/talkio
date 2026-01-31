@@ -8,6 +8,7 @@ import AuthSync from "@/components/AuthSync";
 import "../global.css";
 import { StatusBar } from "expo-status-bar";
 import * as Sentry from "@sentry/react-native";
+import SocketConnection from "@/components/SocketConnection";
 
 Sentry.init({
   dsn: "https://d8fe4bf0dfda8dc37c361361b47e2040@o4507277879148544.ingest.de.sentry.io/4510799249277008",
@@ -52,6 +53,7 @@ export default Sentry.wrap(function RootLayout() {
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <QueryClientProvider client={queryClient}>
         <AuthSync />
+        <SocketConnection />
         <StatusBar style="light" />
         <Stack
           screenOptions={{

@@ -3,7 +3,8 @@ import * as Sentry from "@sentry/react-native";
 import { useAuth } from "@clerk/clerk-expo";
 import { useCallback } from "react";
 
-const API_URL = "https://7b84a26bd93e.ngrok-free.app/api";
+const API_URL = process.env.EXPO_PUBLIC_API_URL || "https://localhost:3000/api";
+if (!API_URL) throw new Error("Missing EXPO_PUBLIC_API_URL");
 
 const api = axios.create({
   baseURL: API_URL,

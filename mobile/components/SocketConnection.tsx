@@ -1,0 +1,35 @@
+import { useSocketStore } from "@/lib/socket";
+import { useAuth } from "@clerk/clerk-expo";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+
+const SocketConnection = () => {
+  const { getToken, isSignedIn } = useAuth();
+  const queryClient = useQueryClient();
+  const connect = useSocketStore((state) => state.connect);
+  const disconnect = useSocketStore((state) => state.disconnect);
+
+  useEffect(() => {
+    if (!isSignedIn) {
+      disconnect();
+      return;
+    }
+
+    let mounted = true;
+
+    getToken().then((token) => {
+      if (mounted && token) {
+        connect(token, queryClient);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      disconnect();
+    };
+  }, [isSignedIn, connect, disconnect, getToken, queryClient]);
+
+  return null;
+};
+
+export default SocketConnection;
